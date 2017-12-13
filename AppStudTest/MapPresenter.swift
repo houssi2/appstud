@@ -51,7 +51,6 @@ func detachView() {
                     lat = res["location"]!["lat"]! as! Float
                     lng = res["location"]!["lng"]! as! Float
                 }
-
                 if let resDataPhoto = json["photos"].arrayObject {
                     var res = resDataPhoto as! [[String:AnyObject]]
                      photoReference = res[0]["photo_reference"]! as! String

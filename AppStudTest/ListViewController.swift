@@ -12,16 +12,23 @@ import GoogleMaps
 
 class ListViewController: UIViewController {
 
-    var bars = [LocationDetail]()
-     let locationManager = CLLocationManager()
-    var location = CLLocationCoordinate2D(latitude: 37.7721367, longitude: -122.410789)
+    // @IBOutlet
     @IBOutlet weak var tableView: UITableView?
+
+    // var
+    var bars = [LocationDetail]()
+    var locationManager = CLLocationManager()
+    var location = CLLocationCoordinate2D(latitude: 37.7721367, longitude: -122.410789)
     fileprivate let presenter = ListPresenter(mapServices: MapServices())
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter.attachView(self)// presnter methode
 
+        // presnter
+        presenter.attachView(self)
+
+        //get user location
         self.locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled()
         {
@@ -30,13 +37,13 @@ class ListViewController: UIViewController {
             locationManager.requestLocation()
         }
 
+        //add refreshControl
         var refreshControl: UIRefreshControl = {
             let refreshControl = UIRefreshControl()
             refreshControl.addTarget(self, action:
                 #selector(ListViewController.handleRefresh(_:)),
                                      for: UIControlEvents.valueChanged)
-            refreshControl.tintColor = UIColor.red
-
+            refreshControl.tintColor = UIColor.gray
             return refreshControl
         }()
         tableView?.addSubview(refreshControl)
@@ -45,17 +52,13 @@ class ListViewController: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
+    // selector refreshControl
     func handleRefresh(_ refreshControl: UIRefreshControl) {
         presenter.getNearbyPlaces(lat:String( location.latitude), lng: String(location.longitude))
         refreshControl.endRefreshing()
 
     }
-
-
-
 }
 
 
@@ -72,7 +75,6 @@ extension ListViewController:CLLocationManagerDelegate
         print("error")
         presenter.getNearbyPlaces(lat: "37.7721367", lng: "-122.410789")
     }
-    
 }
 
 //extension : UITableViewDataSource
@@ -86,7 +88,7 @@ extension ListViewController: UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell")! as! BarTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell")! as! BarTableViewCell // create Cell
         var refImage = bars[(indexPath as NSIndexPath).row].refImage
         cell.img.sd_setImage(with: URL(string: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=\(Int(tableView.frame.width))&photoreference=\(refImage)&key=AIzaSyDX94XsmOraY4X3puvQAh_UY1QnQE7KCP4"), placeholderImage: nil)
         cell.label.text = bars[(indexPath as NSIndexPath).row].name

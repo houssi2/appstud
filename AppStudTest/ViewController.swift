@@ -14,7 +14,8 @@ import SDWebImage
 
 class ViewController: UIViewController  {
 
-    let locationManager = CLLocationManager()
+    //var
+    var locationManager = CLLocationManager()
     var location = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var mapView : GMSMapView!
     fileprivate let presenter = MapPresenter(mapServices: MapServices())
@@ -26,9 +27,11 @@ class ViewController: UIViewController  {
         presenter.attachView(self) // presenter
 
         // init mapView
-        let camera = GMSCameraPosition.camera(withLatitude: 37.7721367, longitude: -122.410789, zoom: 10)
+        let camera = GMSCameraPosition.camera(withLatitude: 37.7721367, longitude: -122.410789, zoom: 15)
         mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
         mapView.isMyLocationEnabled = true
+        mapView.settings.myLocationButton = true
+         mapView.padding = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         view = mapView
 
         //get user location
@@ -40,7 +43,6 @@ class ViewController: UIViewController  {
             locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
             locationManager.requestLocation()
         }
-
 
     }
 
@@ -54,10 +56,9 @@ class ViewController: UIViewController  {
 //GoogleMapLocation
 extension ViewController:CLLocationManagerDelegate
 {
-
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         location = manager.location!.coordinate
-        let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: 10)
+        let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: 15)
         self.mapView.camera = camera
         presenter.getNearbyPlaces(lat:String( location.latitude), lng: String(location.longitude))
 
